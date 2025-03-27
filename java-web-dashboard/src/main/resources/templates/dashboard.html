@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Java System Dashboard</title>
+    <script src="/webjars/chartjs/3.9.1/dist/chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .metric { margin: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        canvas { max-width: 600px; }
+    </style>
+</head>
+<body>
+    <h1>System Dashboard - <span th:text="${hostname}"></span></h1>
+    
+    <div class="metric">
+        <h2>CPU Load: <span th:text="${cpuLoad}"></span>%</h2>
+        <canvas id="cpuChart"></canvas>
+    </div>
+    
+    <div class="metric">
+        <h2>Memory Usage: <span th:text="${memoryUsed}"></span>%</h2>
+        <canvas id="memChart"></canvas>
+    </div>
+    
+    <div th:text="${os}"></div>
+
+    <script>
+        function createChart(elementId, value) {
+            new Chart(document.getElementById(elementId), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Used', 'Free'],
+                    datasets: [{
+                        data: [value, 100-value],
+                        backgroundColor: ['#ff6384', '#36a2eb']
+                    }]
+                }
+            });
+        }
+        
+        createChart('cpuChart', [[${cpuLoad}]]);
+        createChart('memChart', [[${memoryUsed}]]);
+    </script>
+</body>
+</html>
