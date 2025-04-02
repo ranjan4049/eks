@@ -1,15 +1,17 @@
-# Build stage
-FROM maven:3.8.6-openjdk-17 AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
+# Use a base image with both Maven and JDK support
+FROM maven:3.8.5-openjdk-17
 
-# Runtime stage
-FROM eclipse-temurin:17-jre
+# Set the working directory
 WORKDIR /app
-COPY --from=build /app/target/dashboard-1.0.0.jar ./app.jar
 
-# Expose port and configure runtime
+# Copy the entire project into the container
+COPY . .
+
+# Build the project and generate the JAR file
+RUN mvn clean package
+
+# Expose the application's port
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "target/dashboard-1.0.0.jar"]
